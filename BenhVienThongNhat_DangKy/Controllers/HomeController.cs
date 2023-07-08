@@ -1,4 +1,5 @@
 ﻿using BenhVienThongNhat_DangKy.Models;
+using BenhVienThongNhat_DangKy.Models.View_Models;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
@@ -73,34 +74,114 @@ namespace BenhVienThongNhat_DangKy.Controllers
 		//    }
 		//    return false;
 		//}
-		private BenhNhan _benhnhan;
 		
-        public async Task<IActionResult> Create(int khu)
+        public async Task<IActionResult> Create(int id_khu)
 		{
             ViewData["id_gioitinh1"] = new SelectList(_context.GioiTinh, "id", "name");
-			ViewData["id_phong"] = new SelectList(_context.Phong.Where(p => p.khoa.id_khu == khu).Include(p=>p.khoa), "id", "name");
-            BenhNhan model = new BenhNhan()
+			ViewData["id_phong"] = new SelectList(_context.Phong.Where(p => p.khoa.id_khu == id_khu), "id", "name");
+
+            ViewData["phong"] = _context.Phong.Where(p => p.khoa.id_khu == id_khu).Select(a => new SelectListItem
             {
-				//thoigian = DateTime.Parse((DateTime.Now).ToShortTimeString())
+                Text = a.name,
+                Value = a.id.ToString()
+            });
+
+            BenhNhanViewModel model = new BenhNhanViewModel()
+			{
+				//thoigian = DateTime.Now,
+				id_khu = id_khu
 			};
             return View(model);
         }
 
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Create(int khu,[Bind("hoten,namsinh,mabn,thoigian,id_gioitinh,id_phong")] BenhNhan thongTinKhamBenh)
+        public async Task<IActionResult> Create(int id_khu, [Bind("hoten,namsinh,mabn,thoigian,id_gioitinh,id_khu,phongs,id_phong")] BenhNhanViewModel thongTinKhamBenh)
         {
-			thongTinKhamBenh.thoigian = DateTime.Now;
+            
             if (ModelState.IsValid)
             {
-				_benhnhan = thongTinKhamBenh;
-                //_context.Add(thongTinKhamBenh);
-                //await _context.SaveChangesAsync();
-                return RedirectToAction(nameof(Index));
+                for (int i = 0; i < thongTinKhamBenh.phongs.Count; i++)
+                {
+                    if (i > 0)
+                    {
+                        thongTinKhamBenh.id++;
+                        thongTinKhamBenh.id_phong = thongTinKhamBenh.phongs[i];
+                        thongTinKhamBenh.thoigian = DateTime.Now;
+                        _context.Add(thongTinKhamBenh);
+                        await _context.SaveChangesAsync();
+                        continue;
+                    }
+                    thongTinKhamBenh.id_phong = thongTinKhamBenh.phongs[i];
+                    thongTinKhamBenh.thoigian = DateTime.Now;
+                    _context.Add(thongTinKhamBenh);
+                    await _context.SaveChangesAsync();
+                }
+                
+                BenhNhanViewModel model = new BenhNhanViewModel()
+                {
+                    //thoigian = DateTime.Now,
+                    id_khu = id_khu
+                };
+                return RedirectToAction(nameof(abc), model);
             }
-            ViewData["id_gioitinh"] = new SelectList(_context.GioiTinh, "Id", "Name", thongTinKhamBenh.id_gioitinh);
-            ViewData["id_phong"] = new SelectList(_context.Phong.Where(p => p.khoa.id_khu == khu).Include(p => p.khoa), "id", "name",thongTinKhamBenh.phong.id_khoa);
+            ViewData["phong"] = _context.Phong.Where(p => p.khoa.id_khu == id_khu).Select(a => new SelectListItem
+            {
+                 Text = a.name,
+                 Value = a.id.ToString(),
+                 Selected= true
+            });
+            ViewData["id_gioitinh1"] = new SelectList(_context.GioiTinh, "Id", "Name", thongTinKhamBenh.id_gioitinh);
             return View(thongTinKhamBenh);
         }
+        public async Task<IActionResult> abc(int id_khu)
+        {
+            BenhNhanViewModel model = new BenhNhanViewModel()
+            {
+                //thoigian = DateTime.Now,
+                id_khu = id_khu
+            };
+            return RedirectToAction(nameof(Create), model);
+        }
+
+        //public async Task<IActionResult> ChonPhong(int id_khoa,int id)
+        //{
+
+        //	//var id = await _context.BenhNhan.MaxAsync(p=>p.id);
+        //	var bn = await _context.BenhNhan.Where(p => p.id == id).FirstAsync();
+        //	if (bn == null)
+        //	{
+        //		return NotFound();
+        //	}
+        //	ViewData["id_phong"] = new SelectList(_context.Phong.Where(s => s.id_khoa == id_khoa).Include(s => s.khoa), "id", "name");
+        //	return View(bn);
+        //}
+
+        //[HttpPatch]
+        //[ValidateAntiForgeryToken]
+        //public async Task<IActionResult> ChonPhong(int id,int id_khoa,[Bind("hoten,namsinh,mabn,thoigian,id_gioitinh,id_khoa,id_phong")] BenhNhan thongTinKhamBenh)
+        //{
+        //	if(id !=thongTinKhamBenh.id)
+        //	{
+        //		return NotFound();
+        //	}
+        //	thongTinKhamBenh.thoigian = DateTime.Now;
+        //	if (ModelState.IsValid)
+        //	{
+        //		try
+        //		{
+        //                  _context.Update(thongTinKhamBenh);
+        //                  await _context.SaveChangesAsync();
+        //              }
+        //		catch (DbUpdateConcurrencyException)
+        //		{
+
+        //			throw;
+        //              }
+        //              return RedirectToAction(nameof(Index));
+        //          }
+        //          ViewData["id_phong"] = new SelectList(_context.Phong.Where(p => p.id_khoa ==  id_khoa).Include(p => p.khoa), "id", "name", thongTinKhamBenh.phong.id_khoa);
+        //	return View(thongTinKhamBenh);
+        //}
     }
 }

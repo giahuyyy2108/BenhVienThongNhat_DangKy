@@ -2,6 +2,7 @@
 using System.ComponentModel.DataAnnotations.Schema;
 using System.ComponentModel.DataAnnotations;
 using System;
+using System.Diagnostics.CodeAnalysis;
 
 namespace DangKy_API.Models
 {
@@ -25,7 +26,7 @@ namespace DangKy_API.Models
 
 		[ForeignKey("id_gioitinh")]
 		public GioiTinh gioiTinh { get; set; }
-
+		[AllowNull]
 		public int id_phong { get; set; }
 
 		[ForeignKey("id_phong")]

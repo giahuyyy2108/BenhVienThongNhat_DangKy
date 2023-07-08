@@ -31,11 +31,10 @@ namespace DangKy_API
 		public void ConfigureServices(IServiceCollection services)
 		{
 
-
-
-			services.AddControllers()
-				//.AddXmlDataContractSerializerFormatters()
-				.AddNewtonsoftJson();
+		
+            services.AddControllers()
+                //.AddXmlDataContractSerializerFormatters()
+                .AddNewtonsoftJson();
 
             services.AddHttpClient<GioiTinhController>();
 

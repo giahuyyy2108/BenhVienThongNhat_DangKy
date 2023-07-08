@@ -21,12 +21,14 @@ namespace BenhVienThongNhat_DangKy.Models
 		public string mabn { get; set; }
 		public string sothe { get; set; }
 
-		public int id_gioitinh { get; set; }
+        [Required(ErrorMessage = "Phải nhập đầy đủ thông tin")]
+        public int id_gioitinh { get; set; }
 
 		[ForeignKey("id_gioitinh")]
 		public GioiTinh gioiTinh { get; set; }
 
-		public int id_phong { get; set; }
+        [Required(ErrorMessage = "Phải nhập đầy đủ thông tin")]
+        public int? id_phong { get; set; }
 
 		[ForeignKey("id_phong")]
 		public phong phong { get; set; }

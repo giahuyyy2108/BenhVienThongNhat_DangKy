@@ -1,4 +1,4 @@
-﻿@model BenhVienThongNhat_DangKy.Models.BenhNhan
+﻿@model BenhVienThongNhat_DangKy.Models.View_Models.BenhNhanViewModel
 
 @{
     ViewData["Title"] = "";
@@ -7,8 +7,10 @@
 
 
 <div class="col-md-12">
-    <span class="text-danger">@ViewBag.erro</span>
+
+    @*<span class="text-danger">@ViewBag.erro</span>*@
     <form asp-action="Create">
+        <input type="hidden" asp-for="id_khu" />
         <div asp-validation-summary="ModelOnly" class="text-danger"></div>
         <div class="form-group">
             <label class="control-label">Mã bệnh nhân</label>
@@ -25,6 +27,8 @@
             <input asp-for="namsinh" class="form-control" id="namsinh" />
             <span asp-validation-for="namsinh" class="text-danger"></span>
         </div>
+       
+
         <div class="form-group">
             <label class="control-label">Giới tính</label>
             <select asp-for="id_gioitinh" class="form-control" asp-items="ViewBag.id_gioitinh1" id="gt">
@@ -33,14 +37,16 @@
             <span asp-validation-for="id_gioitinh" class="text-danger"></span>
         </div>
         <div class="form-group">
-            <label class="control-label">Phòng</label>
-            <select asp-for="id_phong" class="form-control" asp-items="ViewBag.id_phong" id="gt">
-                <option value="" selected>--Vui lòng chọn phòng--</option>
+            <label class="control-label">Phong</label>
+            <select asp-for="phongs" class="form-control" asp-items="ViewBag.phong" id="gt">
             </select>
-            <span asp-validation-for="id_phong" class="text-danger"></span>
+
+            @*<select multiple="multiple" asp-for="id_phong" asp-items="ViewBag.phong"></select></>*@
+
+            <span asp-validation-for="phongs" class="text-danger"></span>
         </div>
         <div class="form-group">
-            <input asp-for="id_phong" class="form-control d-none" id="TG_duKien" />
+            <input asp-for="id_phong" class="form-control d-none" id="TG_duKien" value="0"/>
             @*<input type="time" asp-for="thoigian" class="form-control d-none" id="TG_duKien" placeholder="HH:mm" />
             <span asp-validation-for="thoigian" class="text-danger"></span>*@
         </div>
